@@ -1,5 +1,20 @@
+<!DOCTYPE html>
 <html>
-	<body>
-		<h1>Hello World</h1>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+		<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+		<script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+
+		<title>{{.Title}}</title>
+	</head>
+	<body class="font-sans bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-50">
+
+		{{ if (eq .Env "prod") }}
+		<script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+		{{ else }}
+		<script src="https://unpkg.com/htmx.org@2.0.4/dist/htmx.js" integrity="sha384-oeUn82QNXPuVkGCkcrInrS1twIxKhkZiFfr2TdiuObZ3n3yIeMiqcRzkIcguaof1" crossorigin="anonymous"></script>
+		{{ end }}
 	</body>
 </html>
