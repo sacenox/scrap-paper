@@ -40,7 +40,7 @@ func IndexHtml(data IndexTemplateData) (string, error) {
 func Index(w http.ResponseWriter, r *http.Request) {
 	req := encore.CurrentRequest()
 	env := encore.Meta().Environment.Name
-	title := "📝 Scrap Paper - Home"
+	title := "Scrap Paper - Home"
 
 	if env != "prod" {
 		title = fmt.Sprintf("%s [%s]", title, env)
