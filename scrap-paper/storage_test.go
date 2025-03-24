@@ -5,13 +5,18 @@ import (
 	"testing"
 
 	scrap_paper "encore.app/scrap-paper"
+	"encore.dev/et"
 )
 
 func TestScrapPaperCRUD(t *testing.T) {
 	ctx := context.Background()
 
+	if _, err := et.NewTestDatabase(ctx, "scrap_paper"); err != nil {
+		t.Fatalf("failed to create test database: %v", err)
+	}
+
 	scrapPaper := &scrap_paper.ScrapPaper{
-		Content: "Hello test, test.",
+		Content:   "Hello test, test.",
 		IsPrivate: false,
 	}
 
@@ -24,11 +29,11 @@ func TestScrapPaperCRUD(t *testing.T) {
 		if scrapPaper.Id == "" {
 			t.Fatalf("scrap paper id is empty")
 		}
-	
+
 		if scrapPaper.Content != "Hello test, test." {
 			t.Fatalf("scrap paper content is not Hello test, test.: %v", scrapPaper.Content)
 		}
-	
+
 		if scrapPaper.IsPrivate != false {
 			t.Fatalf("scrap paper private is not false: %v", scrapPaper.IsPrivate)
 		}
@@ -43,7 +48,7 @@ func TestScrapPaperCRUD(t *testing.T) {
 		if scrapPaper.Id == "" {
 			t.Fatalf("scrap paper id is empty")
 		}
-		
+
 		if scrapPaper.Content != "Hello test, test." {
 			t.Fatalf("scrap paper content is not Hello test, test.: %v", scrapPaper.Content)
 		}

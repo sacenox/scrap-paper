@@ -7,8 +7,8 @@ var pgsql = sqldb.NewDatabase("scrap_paper", sqldb.DatabaseConfig{
 })
 
 //encore:service
-type ScrapPaperService struct {}
+type ScrapPaperService struct{}
 
-func NewScrapPaperService() *ScrapPaperService {
-	return &ScrapPaperService{}
+func initScrapPaperService() (*ScrapPaperService, error) {
+	return &ScrapPaperService{}, nil
 }
