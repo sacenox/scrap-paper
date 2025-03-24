@@ -30,12 +30,6 @@ func IndexHtml(data IndexTemplateData) (string, error) {
 	return buf.String(), nil
 }
 
-//
-// Warning: This is a fallback handler, being missused as a catch-all handler.
-// It is used to handle requests that don't match any other route.
-// In our case it means it renders the index page.
-//
-
 //encore:api public raw path=/!fallback
 func Index(w http.ResponseWriter, r *http.Request) {
 	req := encore.CurrentRequest()
@@ -56,7 +50,6 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			return // TODO: Return an error page
 		}
 		w.Write([]byte(html))
-
 		return // DONE
 	}
 
