@@ -85,3 +85,103 @@ func TestScrapPaperCRUD(t *testing.T) {
 		}
 	})
 }
+
+func TestUserCRUD(t *testing.T) {
+	ctx := context.Background()
+
+	if _, err := et.NewTestDatabase(ctx, "scrap_paper"); err != nil {
+		t.Fatalf("failed to create test database: %v", err)
+	}
+
+	user := &scrap_paper.User{
+		Email:    "test@test.com",
+		Password: "password",
+	}
+
+	t.Run("Create", func(t *testing.T) {
+		err := scrap_paper.CreateUser(ctx, user)
+		if err != nil {
+			t.Fatalf("failed to create user: %v", err)
+		}
+
+		if user.ID == "" {
+			t.Fatalf("user id is empty")
+		}
+
+		if user.Email != "test@test.com" {
+			t.Fatalf("user email is not test@test.com: %v", user.Email)
+		}
+
+		if user.Password != "password" {
+			t.Fatalf("user password is not password: %v", user.Password)
+		}
+
+		if user.Token != "" {
+			t.Fatalf("user token is not empty: %v", user.Token)
+		}
+	})
+
+	t.Run("Get", func(t *testing.T) {
+		retrieved := &scrap_paper.User{}
+		retrieved.ID = user.ID
+
+		err := scrap_paper.GetUser(ctx, retrieved)
+		if err != nil {
+			t.Fatalf("failed to get user: %v", err)
+		}
+
+		if retrieved.Email != "test@test.com" {
+			t.Fatalf("retrieved user email is not test@test.com: %v", retrieved.Email)
+		}
+
+		if retrieved.Password != "password" {
+			t.Fatalf("retrieved user password is not password: %v", retrieved.Password)
+		}
+	})
+
+	t.Run("Update", func(t *testing.T) {
+		user.Email = "updated@test.com"
+		user.Password = "newpassword"
+		user.Token = "sometoken"
+
+		err := scrap_paper.UpdateUser(ctx, user)
+		if err != nil {
+			t.Fatalf("failed to update user: %v", err)
+		}
+
+		retrieved := &scrap_paper.User{}
+		retrieved.ID = user.ID
+
+		err = scrap_paper.GetUser(ctx, retrieved)
+		if err != nil {
+			t.Fatalf("failed to get updated user: %v", err)
+		}
+
+		if retrieved.Email != "updated@test.com" {
+			t.Fatalf("updated user email is not updated@test.com: %v", retrieved.Email)
+		}
+
+		if retrieved.Password != "newpassword" {
+			t.Fatalf("updated user password is not newpassword: %v", retrieved.Password)
+		}
+
+		if retrieved.Token != "sometoken" {
+			t.Fatalf("updated user token is not sometoken: %v", retrieved.Token)
+		}
+	})
+
+	t.Run("Delete", func(t *testing.T) {
+		err := scrap_paper.DeleteUser(ctx, user)
+		if err != nil {
+			t.Fatalf("failed to delete user: %v", err)
+		}
+
+		deleted := &scrap_paper.User{}
+		deleted.ID = user.ID
+
+		err = scrap_paper.GetUser(ctx, deleted)
+		if err != sql.ErrNoRows {
+			t.Fatalf("Row should not be found: %v", err)
+		}
+	})
+}

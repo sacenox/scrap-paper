@@ -17,8 +17,20 @@ type IndexTemplateData struct {
 	Env   string
 }
 
+func Index(data IndexTemplateData) (string, error) {
+	// TODO: Home page content?
+	// TODO: Authentication, login, register, etc.
+	//       Use the auth handler to see if there is a token, and that is a logged in request
+	//       if there is no token render the login page.
+	html, err := lib.RenderTemplate(IndexRawTemplate, data)
+	if err != nil {
+		return "", err
+	}
+	return html, nil
+}
+
 //encore:api public raw path=/!fallback
-func (svc *ScrapPaperService) Index(w http.ResponseWriter, r *http.Request) {
+func (svc *ScrapPaperService) IndexEndpoint(w http.ResponseWriter, r *http.Request) {
 	req := encore.CurrentRequest()
 	env := encore.Meta().Environment.Name
 	title := "Scrap Paper - Home"
@@ -28,7 +40,7 @@ func (svc *ScrapPaperService) Index(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if req.Path == "/" {
-		html, err := lib.RenderTemplate(IndexRawTemplate, IndexTemplateData{
+		html, err := Index(IndexTemplateData{
 			Title: title,
 			Env:   env,
 		})

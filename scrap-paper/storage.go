@@ -6,6 +6,13 @@ import (
 	"time"
 )
 
+type User struct {
+	ID       string
+	Email    string
+	Token    string
+	Password string
+}
+
 type ScrapPaper struct {
 	Id        string    `json:"id"`
 	Content   string    `json:"content"`
@@ -80,6 +87,74 @@ func DeletePaper(ctx context.Context, scrapPaper *ScrapPaper) error {
 		DELETE FROM scrap_papers
 		WHERE id = $1
 	`, scrapPaper.Id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func CreateUser(ctx context.Context, user *User) error {
+	result, err := pgsql.Query(ctx, `
+		INSERT INTO users (email, password)
+		VALUES ($1, $2)
+		RETURNING id, email, password
+	`, user.Email, user.Password)
+	if err != nil {
+		return err
+	}
+
+	if result.Next() {
+		err = result.Scan(&user.ID, &user.Email, &user.Password)
+		if err != nil {
+			return err
+		}
+	} else {
+		return sql.ErrNoRows
+	}
+
+	return nil
+}
+
+func GetUser(ctx context.Context, user *User) error {
+	result, err := pgsql.Query(ctx, `
+		SELECT id, email, password, token
+		FROM users
+		WHERE id = $1
+	`, user.ID)
+	if err != nil {
+		return err
+	}
+
+	if result.Next() {
+		err = result.Scan(&user.ID, &user.Email, &user.Password, &user.Token)
+		if err != nil {
+			return err
+		}
+	} else {
+		return sql.ErrNoRows
+	}
+
+	return nil
+}
+
+func UpdateUser(ctx context.Context, user *User) error {
+	_, err := pgsql.Exec(ctx, `
+		UPDATE users
+		SET email = $1, password = $2, token = $3
+		WHERE id = $4
+	`, user.Email, user.Password, user.Token, user.ID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func DeleteUser(ctx context.Context, user *User) error {
+	_, err := pgsql.Exec(ctx, `
+		DELETE FROM users
+		WHERE id = $1
+	`, user.ID)
 	if err != nil {
 		return err
 	}
