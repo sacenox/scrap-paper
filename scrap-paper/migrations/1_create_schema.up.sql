@@ -2,7 +2,7 @@ CREATE TABLE users (
 	id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 	email text NOT NULL UNIQUE,
 	password text NOT NULL,
-	token text,
+	token text NOT NULL,
 	created_at timestamp with time zone DEFAULT now(),
 	updated_at timestamp with time zone DEFAULT now()
 );
