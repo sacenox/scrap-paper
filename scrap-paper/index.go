@@ -1,37 +1,24 @@
 package scrap_paper
 
-// We are building a service that uses htmx to return html from a url
 import (
-	"bytes"
 	_ "embed"
 	"fmt"
 	"net/http"
 
-	"html/template"
-
+	"encore.app/lib"
 	"encore.dev"
 )
 
 //go:embed index.html
-var indexRawTemplate string
+var IndexRawTemplate string
 
 type IndexTemplateData struct {
 	Title string
 	Env   string
 }
 
-func IndexHtml(data IndexTemplateData) (string, error) {
-	tmpl := template.Must(template.New("index").Parse(indexRawTemplate))
-
-	var buf bytes.Buffer
-	if err := tmpl.Execute(&buf, data); err != nil {
-		return "", err
-	}
-	return buf.String(), nil
-}
-
 //encore:api public raw path=/!fallback
-func Index(w http.ResponseWriter, r *http.Request) {
+func (svc *ScrapPaperService) Index(w http.ResponseWriter, r *http.Request) {
 	req := encore.CurrentRequest()
 	env := encore.Meta().Environment.Name
 	title := "Scrap Paper - Home"
@@ -41,7 +28,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if req.Path == "/" {
-		html, err := IndexHtml(IndexTemplateData{
+		html, err := lib.RenderTemplate(IndexRawTemplate, IndexTemplateData{
 			Title: title,
 			Env:   env,
 		})
@@ -55,17 +42,5 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 	// Since we are abusing fallback handler to mount a page on "/"
 	// we need to return a 404 error if the path is not "/"
-	// TODO: Return an error page
 	http.NotFound(w, r)
-}
-
-//
-// Handle static assets
-//
-
-//encore:api public raw path=/assets/:filename
-func Assets(w http.ResponseWriter, r *http.Request) {
-	// This path is relative to the root of the project
-	path := "." + encore.CurrentRequest().Path
-	http.ServeFile(w, r, path)
 }

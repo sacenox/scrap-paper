@@ -83,6 +83,5 @@ func TestScrapPaperCRUD(t *testing.T) {
 		if err != sql.ErrNoRows {
 			t.Fatalf("Row should not be found: %v", err)
 		}
-
 	})
 }
