@@ -16,6 +16,7 @@ func TestIndex(t *testing.T) {
 		Title: "Scrap Paper",
 		Env:   "test",
 	})
+
 	if err != nil {
 		t.Fatal(err)
 	}
